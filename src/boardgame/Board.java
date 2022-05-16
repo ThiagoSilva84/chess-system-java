@@ -42,5 +42,12 @@ public class Board {
 		return pieces[position.getRow()][position.getColumn()];
 	}
 	
+	public void placePiece(Piece piece, Position position) {
+		//ele vai na matriz de peça do tabuleiro
+		//position vai ser um objeto que vai vir com a posição para colocar a peça
+		pieces[position.getRow()][position.getColumn()] = piece;
+		//como position é protected e está no msm pacote de classes, eu cosigo atribuir valor a ela aqui dessa classe
+		piece.position = position;
+	}
 	
 }
