@@ -1,6 +1,8 @@
 package chess;
 
 import boardgame.Board;
+import boardgame.Piece;
+import boardgame.Position;
 import chess.pieces.King;
 import chess.pieces.Rook;
 
@@ -30,9 +32,38 @@ public class ChessMatch {
 		return mat;
 	}
 	
+	//operação movendo a peça
+	public ChessPiece performChessMove(ChessPosition sourcePosition, ChessPosition targetPosition) {
+		//converter a posição para posição da matriz
+		Position source = sourcePosition.toPosition();
+		Position target = targetPosition.toPosition();
+		//validar se na posiçao de origem havia uma peça
+		validateSourcePosition(source);
+		//make move: operação responsavel por realizar o movimento da peça
+		Piece capturedPiece = makeMove(source, target);
+		//feito downCasting pois a peça capturada era do tipo Piece e tem retornar ChessPiece.
+		return (ChessPiece) capturedPiece;
+	}
+	
+	private void validateSourcePosition(Position position) {
+		if (!board.thereIsAPiece(position)) {
+			throw new ChessException("There is no piece on source position.");
+		}
+	}
+	
 	//esse método vai receber as cordenadas do xadrez
 	private void placeNewPiece(char column, int row, ChessPiece piece) {
 		board.placePiece(piece, new ChessPosition(column, row).toPosition());
+	}
+	
+	private Piece makeMove(Position source, Position target) {
+		//retirei a peça que estava na posição de origem
+		Piece p = board.removePiece(source);
+		//vou remover a posivel peça que esteja na posição de destino e ela sera a peça capturada
+		Piece capturedPiece = board.removePiece(target);
+		//colocar a posição de orgem na posição de destino
+		board.placePiece(p, target);
+		return capturedPiece;
 	}
 	
 	//esse método vai colocar as peças no tabuleiro
