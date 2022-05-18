@@ -37,6 +37,8 @@ public class ChessMatch {
 		Position target = targetPosition.toPosition();
 		//validar se na posiçao de origem havia uma peça
 		validateSourcePosition(source);
+		//validar operação de destino
+		validateTargetPosition(source, target);
 		//make move: operação responsavel por realizar o movimento da peça
 		Piece capturedPiece = makeMove(source, target);
 		//feito downCasting pois a peça capturada era do tipo Piece e tem retornar ChessPiece.
@@ -52,6 +54,11 @@ public class ChessMatch {
 		}
 	}
 	
+	private void validateTargetPosition(Position source, Position target){
+		if(!board.piece(source).possibleMove(target)) {
+			throw new ChessException("The chosen piece can't move to target position.");
+		}
+	}
 	//esse método vai receber as cordenadas do xadrez
 	private void placeNewPiece(char column, int row, ChessPiece piece) {
 		board.placePiece(piece, new ChessPosition(column, row).toPosition());
