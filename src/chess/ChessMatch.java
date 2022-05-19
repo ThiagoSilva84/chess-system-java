@@ -8,14 +8,26 @@ import chess.pieces.Rook;
 
 public class ChessMatch {
 	
+	private int turn;
+	private Color currentPlayer;
 	private Board board;
 
 	//o tabuleiro (o board), ele tem as peças.
 	public ChessMatch() {
 		board = new Board(8, 8);
+		turn = 1;
+		currentPlayer = Color.WHITE;
 		initialSetup();
 	}
 	
+	public int getTurn() {
+		return turn;
+	}
+
+	public Color getCurrentPlayer() {
+		return currentPlayer;
+	}
+
 	//retornar uma matriz de peças de xadrez correspondete a essa partida (partida ChessPiece)
 	//o board tem as peças, e essa peças são do tipo piece.
 	//o meu método vai retornar um ChessPiece, pq estou na camada de xadrez
@@ -48,16 +60,27 @@ public class ChessMatch {
 		//make move: operação responsavel por realizar o movimento da peça
 		Piece capturedPiece = makeMove(source, target);
 		//feito downCasting pois a peça capturada era do tipo Piece e tem retornar ChessPiece.
+		nextTurn();
 		return (ChessPiece) capturedPiece;
 	}
 	
 	private void validateSourcePosition(Position position) {
 		if (!board.thereIsAPiece(position)) {
 			throw new ChessException("There is no piece on source position.");
-		}                         
+		}					
+		//testando caso o jogador esteja movimentando uma peça adversaria.
+							 //eu pego a peça do tabuleiro {board.piece(position)} nessa posição, faço downCasting p/ chessPiece, e testo a cor dela
+		if (currentPlayer != ((ChessPiece)board.piece(position)).getColor()) {
+			throw new ChessException("The chosen piece is not yours.");
+		}
 		if (!board.piece(position).isThereAnyPossibleMove()) {
 			throw new ChessException("There is no possible moves for the chosen piece");
 		}
+	}
+	
+	private void nextTurn() {
+		turn++;								//"?" = então        ":" = caso contrário
+		currentPlayer = (currentPlayer == Color.WHITE) ? Color.BLACK : Color.WHITE;
 	}
 	
 	private void validateTargetPosition(Position source, Position target){
